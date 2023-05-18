@@ -4,18 +4,23 @@ title: Analysis of U.S. Storm Event Data and the Impact on Population Health and
 author: "Suhas P K"
 date: "2023-05-17"
 output: 
-  html_document: 
-    toc: yes
-    theme: yeti
+    rmdformats::downcute:
+        downcute_theme : "chaos"
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Course Project
+**Reproducible Research : Project 2**
+The course project is available on [Reproducible Research : Project 2](https://github.com/SuhasPK/RepData_Peer_Assignment2)
+
 # Synopsis
 Storm and other extreme weather events can cause both public health and economic problems. Many extreme events results in fatalities, injuries, and property damage. Preventing such outcomes to the extent possible is a key concern. \n
 The published report contains the result of analysis where the goal was to identify the most hazardous weather events with respect to population health and those with greatest economic impact in the U.S. based on data collected from U.S. National Oceanic and Atmospheric Administration (NOAA).
+
+
 
 ## Libraries used
 ```{r}
@@ -319,6 +324,7 @@ damage_costImpact_data <- damage_costImpact_data[order(damage_costImpact_data$DA
                                                        decreasing = TRUE),]
 ```
 ## Result
+
 ### Event Types Most Harmful to Population Health
 
 Fatalities and injuries have the most harmful impact on population health. The results below display the 10 most harmful weather events in terms of population health in the U.S.
@@ -332,8 +338,13 @@ print(xtable(head(health_impact_data,10),
       html.table.atrributes = 'class = "table-borered", width ="100%"'
       )
 ```
-Code for Plotting.
+For dark themed plot use,
 ```{r}
+library(ggdark)
+```
+
+Code for Plotting.
+```{r,fig.width=10, fig.height=8,fig.fullwidth=FALSE}
 health_impact_chart <- ggplot(head(health_impact_data,10),
                               aes(x=reorder(EVENT_TYPE, HEALTH_IMPACT),
                                   y = HEALTH_IMPACT, fill = EVENT_TYPE)) + 
@@ -342,9 +353,11 @@ health_impact_chart <- ggplot(head(health_impact_data,10),
     xlab("Event Type") + 
     ylab("Total Fatalities and Injuries") + 
     theme(plot.title = element_text(size = 14, hjust = 0.5)) + 
-    ggtitle("Top 10 Weather Events Most Harmful to \nPopulation Health")
+    ggtitle("Top 10 Weather Events Most Harmful to \nPopulation Health")+
+    dark_theme_grey()
 print(health_impact_chart)
 ```
+
 ### Event Types with Greatest Economic Consequences
 
 Property and crop damage have the most harmful impact on the economy. The results below display the 10 most harmful weather events in terms economic consequences in the U.S.
@@ -358,7 +371,7 @@ print(xtable(head(damage_costImpact_data, 10),
       html.table.attributes='class="table-bordered", width="100%"')
 ```
 Code for plotting.
-```{r}
+```{r,fig.width=10, fig.height=8,fig.fullwidth=FALSE}
 ealth_impact_chart <- ggplot(head(health_impact_data,10),
                               aes(x=reorder(EVENT_TYPE, HEALTH_IMPACT),
                                   y = HEALTH_IMPACT, fill = EVENT_TYPE)) + 
@@ -367,7 +380,8 @@ ealth_impact_chart <- ggplot(head(health_impact_data,10),
     xlab("Event Type") + 
     ylab("Total Fatalities and Injuries") + 
     theme(plot.title = element_text(size = 14, hjust = 0.5)) + 
-    ggtitle("Top 10 Weather Events Most Harmful to \nPopulation Health")
+    ggtitle("Top 10 Weather Events Most Harmful to \nPopulation Health")+
+    dark_theme_grey()
 print(health_impact_chart)
 ```
 
