@@ -8,9 +8,20 @@ output:
         downcute_theme : "chaos"
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
+# set knitr options
 knitr::opts_chunk$set(echo = TRUE)
+
+# clear global workspace (including hidden objects) for this session
+rm(list = ls(all.names = TRUE))
+
+# free up memory and display statistics on free memory
+gc()
+
+# disable scientific notation for numbers
+options(scipen = 1)
 ```
+
 
 # Course Project
 **Reproducible Research : Project 2**
@@ -35,6 +46,10 @@ if (!require(dplyr)) {
 if (!require(xtable)) {
     install.packages("xtable")
     library(xtable, warn.conflicts = FALSE)
+}
+if (!require(htmlTable)){
+    install.packages("htmlTables")
+    library(htmlTable, warn.conflicts = FALSE)
 }
 ```
 
@@ -300,7 +315,7 @@ tidy_data$CROP_COST <- with(tidy_data, as.numeric(CROPDMG) * sapply(CROPDMGEXP, 
 
 ## Summarize Data
 Create a summarized dataset of health impact data (fatalities + injuries). Sort the results in descending order by health impact.
-```{r}
+```{r health-impact-table, echo = TRUE, message = FALSE, results = 'asis'}
 # Create a summarise data of health impact data (fatalities + injuries). 
 health_impact_data <- aggregate(
     x = list(HEALTH_IMPACT = tidy_data$FATALITIES + tidy_data$INJURIES),
@@ -310,6 +325,7 @@ health_impact_data <- aggregate(
 )
 health_impact_data <- health_impact_data[order(health_impact_data$HEALTH_IMPACT,
                                                decreasing = TRUE),]
+row.names(health_impact_data) <- NULL
 ```
 Create a summarized dataset of damage impact costs (property damage + crop damage). Sort the results in descending order by damage cost.
 ```{r}
@@ -322,6 +338,7 @@ damage_costImpact_data <- aggregate(
 )
 damage_costImpact_data <- damage_costImpact_data[order(damage_costImpact_data$DAMAGE_IMPACT,
                                                        decreasing = TRUE),]
+row.names(damage_costImpact_data) <- NULL
 ```
 ## Result
 
@@ -330,13 +347,10 @@ damage_costImpact_data <- damage_costImpact_data[order(damage_costImpact_data$DA
 Fatalities and injuries have the most harmful impact on population health. The results below display the 10 most harmful weather events in terms of population health in the U.S.
 ```{r}
 # Event types most harmful to population health.
-print(xtable(head(health_impact_data,10),
-             caption = "Top 10 Weather Events Most Harmful to Population Health"),
-      caption.placement = 'top',
-      type = 'html',
-      include.rownames = FALSE,
-      html.table.atrributes = 'class = "table-borered", width ="100%"'
-      )
+htmlTable(head(health_impact_data,10),
+          caption = "Top 10 Weather Events with Most harmful events to population health. "
+          
+          )
 ```
 For dark themed plot use,
 ```{r}
@@ -361,28 +375,28 @@ print(health_impact_chart)
 ### Event Types with Greatest Economic Consequences
 
 Property and crop damage have the most harmful impact on the economy. The results below display the 10 most harmful weather events in terms economic consequences in the U.S.
-```{r}
-# Event Types with Greatest Economic Consequences
-print(xtable(head(damage_costImpact_data, 10),
-             caption = "Top 10 Weather Events with Greatest Economic Consequences"),
-      caption.placement = 'top',
-      type = "html",
-      include.rownames = FALSE,
-      html.table.attributes='class="table-bordered", width="100%"')
+
+```{r economic-impact-table, echo = TRUE, message = FALSE, results = 'asis'}
+htmlTable(head(damage_costImpact_data,10),
+          caption = "Top 10 Weather Events with Greatest Economic Consequences"
+          
+          )
 ```
+
 Code for plotting.
 ```{r,fig.width=10, fig.height=8,fig.fullwidth=FALSE}
-ealth_impact_chart <- ggplot(head(health_impact_data,10),
-                              aes(x=reorder(EVENT_TYPE, HEALTH_IMPACT),
-                                  y = HEALTH_IMPACT, fill = EVENT_TYPE)) + 
+damage_costImpact_chart <- ggplot(
+    head(damage_costImpact_data,10),
+    aes(x = reorder(EVENT_TYPE, DAMAGE_IMPACT),
+        y = DAMAGE_IMPACT, fill = EVENT_TYPE)) + 
     coord_flip() + 
-    geom_bar(stat = "identity") + 
+    geom_bar(stat = 'identity') + 
     xlab("Event Type") + 
-    ylab("Total Fatalities and Injuries") + 
-    theme(plot.title = element_text(size = 14, hjust = 0.5)) + 
-    ggtitle("Top 10 Weather Events Most Harmful to \nPopulation Health")+
+    ylab("Total property/ Crop damage cost \n(in Billions)") + 
+    theme(plot.title = element_text(size = 14, hjust = 0.7 )) + 
+    ggtitle("Top 10 Weather Events with \nGreatest Economic Consequences")+
     dark_theme_grey()
-print(health_impact_chart)
+print(damage_costImpact_chart)
 ```
 
 ## Conclusion

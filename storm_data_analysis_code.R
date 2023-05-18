@@ -9,6 +9,7 @@ download.file(url = url,
 # LIBRARIES
 library(ggplot2)
 library(dplyr)
+library(tidyverse)
 
 # READ THE .csv FILE
 storm_Data <- read.csv("stormdata.csv")
@@ -201,6 +202,7 @@ damage_costImpact_data <- aggregate(
 )
 damage_costImpact_data <- damage_costImpact_data[order(damage_costImpact_data$DAMAGE_IMPACT,
                                                        decreasing = TRUE),]
+
 
 # Event types most harmful to population health.
 # This is for the R-markdown.
